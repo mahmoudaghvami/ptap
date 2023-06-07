@@ -20,7 +20,13 @@ The PTAP design incorporates a privacy mediator, which serves as a trusted inter
 
 ## Usage
 
-For information on how to use PTAP, please refer to the [usage guide](./USAGE.md). This guide provides detailed instructions on how to deploy and configure PTAP in your smart home environment.
+First you need to have Tensorflow and ART (https://github.com/Trusted-AI/adversarial-robustness-toolbox)
+Then you can run the codes as fallows:
+preprocess.py
+ptap_classifier_4cross_validation.py
+ptap_perturber.py
+ptap_transferability_test.py
+ptap_utility_test.py
 
 ## License
 
