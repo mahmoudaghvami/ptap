@@ -30,20 +30,18 @@ Then you can run the experements  including the following Python scripts:
 5. **PTAP Utility Test:** [`ptap_utility_test.py`](#ptap_utility_testpy)
 
 ### `preprocess.py`
-This script handles data preprocessing tasks. (Add specific details here...)
+This script handles data preprocessing tasks.
 
 ### `ptap_classifier_4cross_validation.py`
-This script trains a classifier with 4-fold cross-validation. (Add specific details here...)
+This script trains a classifier with 4-fold cross-validation.
 
 ### `ptap_perturber.py`
-This script applies perturbations to the input data. (Add specific details here...)
+This script applies perturbations to the input data. 
 
 ### `ptap_transferability_test.py`
-This script evaluates the transferability of the model. (Add specific details here...)
-
+This script evaluates the transferability of the model. 
 ### `ptap_utility_test.py`
-This script evaluates the utility of the model. (Add specific details here...)
-
+This script evaluates the utility of the model. 
 ## License
 
 PTAP is licensed under the [MIT License](./LICENSE).
