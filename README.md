@@ -1,6 +1,8 @@
 # PTAP - Privacy Preserving Trigger Action Platform
 
 Welcome to the GitHub repository for PTAP - Privacy Preserving Trigger Action Platform! PTAP aims to provide a solution for addressing privacy concerns in smart home environments, particularly those related to untrusted Trigger Action Platforms (TAPs).
+![PrivacySHTAP](https://github.com/mahmoudaghvami/ptap/assets/13216089/aa05ec3c-aa58-4512-8b6a-aafa25b5361c)
+
 
 ## Table of Contents
 
