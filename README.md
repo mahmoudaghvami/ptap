@@ -29,20 +29,18 @@ Then you can run the experiments  including the following Python scripts:
 1. **Preprocessing:** [`preprocess.py`](#preprocesspy)
 2. **PTAP Classifier:** [`ptap_classifier_4cross_validation.py`](#ptap_classifier_4cross_validationpy)
 3. **PTAP experements:** [`ptap_exp.py`](#ptap_exp.py)
-4. **PTAP Transferability Test:** [`ptap_transferability_test.py`](#ptap_transferability_testpy)
-5. **PTAP Utility Test:** [`ptap_utility_test.py`](#ptap_utility_testpy)
+4. **PTAP Utility Test:** [`ptap_utility_test.py`](#ptap_utility_testpy)
 
 ### `preprocess.py`
-This script handles data preprocessing tasks.
+This script handles data preprocessing of the Orange4Home dataset (https://amiqual4home.inria.fr/orange4home/).
+
 
 ### `ptap_classifier_4cross_validation.py`
-This script trains a classifier with 4-fold cross-validation.
+This script trains a classifier with 4-fold cross-validation on preprocessed data.
 
-### `ptap_perturber.py`
+### `PTAP experements.py`
 This script applies perturbations to the input data. 
 
-### `ptap_transferability_test.py`
-This script evaluates the transferability of the model. 
 ### `ptap_utility_test.py`
 This script evaluates the utility of the model. 
 ## License
