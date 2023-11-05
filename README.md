@@ -39,10 +39,13 @@ This script handles data preprocessing of the Orange4Home dataset (https://amiqu
 This script trains a classifier with 4-fold cross-validation on preprocessed data.
 
 ### `PTAP experements.py`
-This script applies perturbations to the input data. 
+The ptap_exp.py script is designed to evaluate the robustness of TAP classifiers against various adversarial attacks. It contains functions for conducting different types of attacks (FGSM, JSMA, UAP), measuring their impact on model accuracy, and recording the time taken and number of events injected during each attack. Users can initiate specific experiments by calling the main_runner function with the desired attack type. The script also includes transferability tests, where adversarial examples generated for one model are tested against three target models to assess the cross-model effectiveness of the attacks.
+
 
 ### `ptap_utility_test.py`
-This script evaluates the utility of the model. 
+This script evaluates the utility of PTAP, assuming that the user is running five real IoT applications in their smart home based on the real-world Orange4 Home dataset.
+
+
 ## License
 
 PTAP is licensed under the [MIT License](./LICENSE).
