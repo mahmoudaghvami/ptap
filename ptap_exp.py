@@ -475,7 +475,8 @@ def tap(model_param, attack_params, data, x_test_adv , original_accuracy, advers
 
 
 def saver(attack_method, attack_params, accuracy_benign, accuracy_adversarial, x_test_adv, dfTest, scaler):
-    results_base_dir = "/home/amini/ptap/exp_results"
+    base_path = os.path.dirname(__file__)  # Base path for the script
+    results_base_dir = os.path.join(base_path, 'exp_results')  # Directory for experiment results
     n_features = 196
     
 
@@ -594,12 +595,16 @@ def save_time_and_event_measurement(filename, attack_name, attack_params, start_
         csv_writer.writerow([attack_name, attack_params_str, runtime_minutes, timestamp, num_injected_events])
 
 def main_runner(experiment_id):
-    tfilename = '/home/amini/ptap/exp_results/time_event_measurement.csv'
+    # Define base paths for relative file access
+    base_path = os.path.dirname(__file__)  # Base path for the script
+    results_base_dir = os.path.join(base_path, 'exp_results')  # Directory for experiment results
+
+    tfilename = os.path.join(results_base_dir, 'time_event_measurement.csv')
+
     accuracies = []
     # Load the data
     # df, min_pixel_value, max_pixel_value, x_train, y_train, x_test, y_test, n_timesteps, n_features, n_outputs = load_data()
     data = load_data()
-    results_base_dir = "/home/amini/ptap/exp_results"
     original_accuracy = 0
     adversarial_accuracy = 0
     num_injected_events = 0
@@ -607,8 +612,7 @@ def main_runner(experiment_id):
 
     if(experiment_id == 'fgsm'):
         attack_method='fgsm'
-        # epsilons = [0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4, 0.45, 0.5]
-        epsilons = [0.15]
+        epsilons = [0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4, 0.45, 0.5]
         for epsilon in epsilons:
             attack_params = {'eps': epsilon}
             print(f"Running for epsplot_attack_accuracy(attack_method, epsilons, accuracies, original_accuracy,results_base_dir)ilon = {epsilon}")
@@ -626,9 +630,7 @@ def main_runner(experiment_id):
         attack_method = 'jsma'
         num_runs =50
         run_indices = list(range(1, num_runs + 1))
-        # gammas = [0.05, 0.1, 0.15, 0.2]
         gammas = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3,0.35,0.4, 0.45, 0.5]
-        # gammas = [0.35]
         attack_params_base = {'theta': 0.1, 'gamma': None}
         
         all_accuracies = {gamma: [] for gamma in gammas}
@@ -662,10 +664,7 @@ def main_runner(experiment_id):
         attack_method = 'jsma'
         num_runs =1
         run_indices = list(range(1, num_runs + 1))
-        # gammas = [0.05, 0.1, 0.15, 0.2]
-        # gammas = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3,0.35,0.4, 0.45, 0.5]
-        gammas = [0.2]
-        # gammas = [0.01]
+        gammas = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3,0.35,0.4, 0.45, 0.5]
         attack_params_base = {'theta': 0.1, 'gamma': None}
         
         all_accuracies = {gamma: [] for gamma in gammas}
@@ -700,9 +699,7 @@ def main_runner(experiment_id):
 
     elif(experiment_id == 'uap_fgsm'):
         attack_method='uap_fgsm'
-        # epsilons = [0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4, 0.45, 0.5]
         epsilons = [0.001,0.002,0.003,0.004,0.005, 0.1,0.2,0.3,0.4, 0.5]
-        # epsilons = [0.005]
         for epsilon in epsilons:
             attack_params = {'eps': epsilon}
             print(f"Running for epsilon = {epsilon}")
@@ -718,10 +715,6 @@ def main_runner(experiment_id):
     #Black box tests  fgsm  
     elif(experiment_id == 'trans_fgsm'):
         attack_method='fgsm'
-        # epsilons = [0.05,0.1,0.15,0.2,0.25,0.3]
-        # epsilons = [0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5]
-        # epsilons = [0.05]
-        # epsilons = [0.1,0.2,0.3]
         epsilons = [0.2]
         for epsilon in epsilons:
             attack_params = {'eps': epsilon}
@@ -760,10 +753,7 @@ def main_runner(experiment_id):
 
     elif(experiment_id == 'trans_uap_fgsm'):
         attack_method='uap_fgsm'
-        # epsilons = [0.1,0.2,0.3,0.4,0.5]
-        # epsilons = [0.0,0.05]
         epsilons = [0.2]
-
         for epsilon in epsilons:
             attack_params = {'eps': epsilon}
             print(f"Running for epsilon = {epsilon}")
@@ -776,18 +766,6 @@ def main_runner(experiment_id):
             target_model = 'both'
             tap(target_model,attack_params, data, x_test_adv, original_accuracy, adversarial_accuracy)
         
-    elif(experiment_id == 'random_noise'):
-        attack_method = 'random_noise'
-        epsilons = [0.1,0.2,0.3]
-        for epsilon in epsilons:
-            attack_params = {'eps': epsilon}
-            print(f"Running random noise with epsilon = {epsilon}")
-            start_time = time.time()
-            original_accuracy, adversarial_accuracy, x_test_adv = perturber(attack_method, attack_params, data, y_target=None)
-            end_time = time.time()
-            accuracies.append(adversarial_accuracy)
-            saver(attack_method, attack_params, original_accuracy, adversarial_accuracy, x_test_adv, dfTest=data[1], scaler=data[2])
-
     end_time = time.time()
     print(f"The code took {(end_time - start_time) } Seconds to run.")
 
