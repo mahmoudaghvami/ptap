@@ -1,0 +1,2 @@
+model_checkpoint_path: "classifier_4c_itr"
+all_model_checkpoint_paths: "classifier_4c_itr"
