@@ -200,17 +200,11 @@ def perturber(attack_method, attack_params, data,y_target):
     loss_object = tf.keras.losses.CategoricalCrossentropy(from_logits=True)
 
 
-    # Create the ART classifier
     # load model from file
-    # model.load_weights('/home/maghvami/ptap/saved_models/1dcnn/1dcnn_v1')
-    # model.load_weights('/home/maghvami/ptap/saved_models/4iter/classifier_4c_itr')
-    # model = tf.saved_model.load('/home/maghvami/ptap/saved_models/tmp/O4H_ART_saved_model8')
-    # model.load_weights('/home/amini/ptap/saved_models/utap1')
+    # model.load_weights('/home/amini/ptap/saved_models/4iter/classifier_4c_itr')
+    model_weights_path = os.path.join(base_path, 'saved_models', '4iter', 'classifier_4c_itr')
+    model.load_weights(model_weights_path)
 
-
-    model.load_weights('/home/amini/ptap/saved_models/4iter/classifier_4c_itr')
-    # model.load_weights('/home/amini/ptap/saved_models/ne_ptap')
-    # model.load_weights('/home/amini/ptap/saved_models/ptap_e50_v2')
 
     classifier = TensorFlowV2Classifier(
         model=model,
@@ -243,12 +237,6 @@ def perturber(attack_method, attack_params, data,y_target):
         if domain_adoption:
             x_test_adv = domain_adaptation(x_test_adv, x_test)
 
-    elif attack_method == 'pgd':
-        attack = ProjectedGradientDescent(estimator=classifier, eps=attack_params['eps'])
-        x_test_adv = attack.generate(x=x_test, mask=mask_param)
-        if domain_adoption:
-            x_test_adv = domain_adaptation(x_test_adv, x_test)
-
     elif attack_method == 'jsma':
         attack = SaliencyMapMethod(classifier, theta=attack_params['theta'], gamma=attack_params['gamma'])
         x_test_adv = attack.generate(x=x_test, y=y_target, mask=mask_param)
@@ -261,33 +249,15 @@ def perturber(attack_method, attack_params, data,y_target):
             x_test_adv = attack.generate(x_test, mask=mask_injection)
             
             # Compute the number of injected events
-            threshold = 0.00001
-            diff = np.where(np.abs(x_test_adv - x_test) > threshold, 1, 0)
-            num_injected_events = np.count_nonzero(diff)
-            average_num_injected_events_per_sample = num_injected_events / 2551
+            # threshold = 0.00001
+            # diff = np.where(np.abs(x_test_adv - x_test) > threshold, 1, 0)
+            # num_injected_events = np.count_nonzero(diff)
+            # average_num_injected_events_per_sample = num_injected_events / 2551
             
             # You can return this value or print it
-            print(f"Total number of injected events: {num_injected_events}")
-            print(f"Average number of injected events per sample: {average_num_injected_events_per_sample}")
+            # print(f"Total number of injected events: {num_injected_events}")
+            # print(f"Average number of injected events per sample: {average_num_injected_events_per_sample}")
 
-            if domain_adoption:
-                x_test_adv = domain_adaptation(x_test_adv, x_test)
-
-    elif attack_method == 'uap_pgd':
-        attack = UniversalPerturbation(classifier, attacker="pgd", attacker_params=attack_params, verbose=True)
-        x_test_adv = attack.generate(x_test, mask=mask_injection)
-        if domain_adoption:
-            x_test_adv = domain_adaptation(x_test_adv, x_test)
-
-    elif attack_method == 'uap_deepfool':
-            attack = UniversalPerturbation(classifier, attacker="deepfool", attacker_params=attack_params, verbose=True)
-            x_test_adv, num_injected_events = attack.generate(x_test, mask=mask_injection)
-            if domain_adoption:
-                x_test_adv = domain_adaptation(x_test_adv, x_test)
-
-    elif attack_method == 'uap_jsma':
-            attack = UniversalPerturbation(classifier, attacker="jsma", attacker_params=attack_params, verbose=True)
-            x_test_adv, num_injected_events = attack.generate(x_test, mask=mask_injection)
             if domain_adoption:
                 x_test_adv = domain_adaptation(x_test_adv, x_test)
   
@@ -309,52 +279,23 @@ def perturber(attack_method, attack_params, data,y_target):
 def tap(model_param, attack_params, data, x_test_adv , original_accuracy, adversarial_accuracy):
 
     results = []
-    
-    # class TensorFlowModel2(Model):
-    #     def __init__(self):
-    #         super(TensorFlowModel2, self).__init__()
-    #         n_features = 196
-    #         n_classes = 25
-    #         n_nodes = (n_features + n_classes) // 3  # Reduce the number of LSTM units
-    #         self.model = tf.keras.models.Sequential([
-    #             tf.keras.layers.LSTM(units=n_nodes, input_shape=(n_features, 1)),
-    #             # Removed Dropout
-    #             tf.keras.layers.Dense(units=n_classes)
-    #         ])
-
-    #     def call(self, x):
-    #         return self.model(x)
+    # Define the path to the 'res' folder relative to the current script location
+    base_path = os.path.join(os.path.dirname(__file__), 'res')
 
     class TensorFlowModel2(Model): #LSTM model
         def __init__(self):
             super(TensorFlowModel2, self).__init__()
             n_features = 196
             n_classes = 25
-            n_nodes = (n_features + n_classes) // 4 # Reduced number of LSTM units
+            n_nodes = (n_features + n_classes) // 2
             self.model = tf.keras.models.Sequential([
                 tf.keras.layers.LSTM(units=n_nodes, input_shape=(n_features, 1)),
-                # Removed Dropout
-                tf.keras.layers.Dense(units=n_classes // 2) # Reduced complexity of dense layer
+                tf.keras.layers.Dropout(0.5),
+                tf.keras.layers.Dense(units=n_classes)
             ])
 
         def call(self, x):
             return self.model(x)
-
-
-    # class TensorFlowModel2(Model): #LSTM model
-    #     def __init__(self):
-    #         super(TensorFlowModel2, self).__init__()
-    #         n_features = 196
-    #         n_classes = 25
-    #         n_nodes = (n_features + n_classes) // 2
-    #         self.model = tf.keras.models.Sequential([
-    #             tf.keras.layers.LSTM(units=n_nodes, input_shape=(n_features, 1)),
-    #             tf.keras.layers.Dropout(0.5),
-    #             tf.keras.layers.Dense(units=n_classes)
-    #         ])
-
-    #     def call(self, x):
-    #         return self.model(x)
 
     class TensorFlowModel3(Model): #MLP model
         def __init__(self):
@@ -370,22 +311,23 @@ def tap(model_param, attack_params, data, x_test_adv , original_accuracy, advers
 
         def call(self, x):
             return self.model(x)
-    
+        
+    # class TensorFlowModel4(Model):  #Deep1DCNNModel
+    #         def __init__(self):
+    #             super(TensorFlowModel4, self).__init__()
+    #             self.model = tf.keras.models.Sequential([
+    #                 tf.keras.layers.Conv1D(filters=32, kernel_size=3, activation='relu', input_shape=(196, 1)),
+    #                 tf.keras.layers.MaxPooling1D(pool_size=2),
+    #                 tf.keras.layers.Conv1D(filters=64, kernel_size=3, activation='relu'),
+    #                 tf.keras.layers.MaxPooling1D(pool_size=2),
+    #                 tf.keras.layers.Conv1D(filters=128, kernel_size=3, activation='relu'),
+    #                 tf.keras.layers.MaxPooling1D(pool_size=2),
+    #                 tf.keras.layers.Flatten(),
+    #                 tf.keras.layers.Dense(units=128, activation='relu'),
+    #                 tf.keras.layers.Dense(units=25)])
 
-    # class TensorFlowModel3(Model):
-    #     def __init__(self):
-    #         super(TensorFlowModel3, self).__init__()
-    #         n_features = 196
-    #         n_classes = 25
-    #         self.model = tf.keras.models.Sequential([
-    #             tf.keras.layers.Flatten(input_shape=(n_features, 1)),
-    #             tf.keras.layers.Dense(64, activation='relu'),  # Reduced neurons
-    #             # Removed Dropout
-    #             tf.keras.layers.Dense(n_classes),
-    #         ])
-
-    #     def call(self, x):
-    #         return self.model(x)
+    #         def call(self, x):
+    #             return self.model(x)
 
     user_choice = model_param
     print("User choice is: ", user_choice)
@@ -405,11 +347,9 @@ def tap(model_param, attack_params, data, x_test_adv , original_accuracy, advers
 
         
         model2 = TensorFlowModel2()
-        # load model
-        # model2.load_weights('/home/amini/ptap/saved_models/tap/lstm_ne')
-        # model2.load_weights('/home/amini/ptap/saved_models/lstm_new_test_02')  #new_model_pets
-        # model2.load_weights('/home/amini/ptap/saved_models/old/lstm_model2_v1')  #prev_model_Usenix
-        # model2.load_weights('/home/amini/ptap/saved_models/old/testak_lstm_model2_v1')  #prev_model_Usenix
+        # Load model2 weights from the new relative path
+        model2_weights_path = os.path.join(base_path, 'saved_models', 'old', 'lstm_model2_v1')
+        model2.load_weights(model2_weights_path)
         
 
         optimizer = tf.keras.optimizers.Adam(learning_rate=0.01)
@@ -424,9 +364,9 @@ def tap(model_param, attack_params, data, x_test_adv , original_accuracy, advers
         )
 
         # Step 4: Train the ART classifier
-        classifier2.fit(x_train, y_train, batch_size=32, nb_epochs=10)
+        # classifier2.fit(x_train, y_train, batch_size=32, nb_epochs=50)
 
-        model2.save_weights('/home/amini/ptap/saved_models/ld_03')
+        # model2.save_weights('/home/amini/ptap/saved_models/ld_03')
         
 
 
@@ -463,11 +403,14 @@ def tap(model_param, attack_params, data, x_test_adv , original_accuracy, advers
 
     
         model3 = TensorFlowModel3()
-        # load model
-        # model3.load_weights('/home/amini/ptap/saved_models/tap/mlp_ne')
-        # model3.load_weights('/home/amini/ptap/saved_models/tap/mlp_new_test_02') #new_model_pets
-        model3.load_weights('/home/amini/ptap/saved_models/old/mlp_model3_v1')  #prev_model_Usenix
 
+        # Load model3 weights from the new relative path
+        model3_weights_path_v1 = os.path.join(base_path, 'saved_models', 'old', 'mlp_model3_v1')
+        model3.load_weights(model3_weights_path_v1)
+        
+        # Load model4 -DeepCNN weights
+        # model4_weights_path_ld04 = os.path.join(base_path, 'saved_models', 'ld04')
+        # model3.load_weights(model4_weights_path_ld04)
 
         classifier3 = TensorFlowV2Classifier(
             model=model3,
@@ -479,7 +422,7 @@ def tap(model_param, attack_params, data, x_test_adv , original_accuracy, advers
         )
 
         # Step 4: Train the ART classifier
-        # classifier3.fit(x_train, y_train, batch_size=32, nb_epochs=10 )
+        # classifier3.fit(x_train, y_train, batch_size=32, nb_epochs=50 )
 
         # model3.save_weights('/home/amini/ptap/saved_models/tap/mlp_ld_01')
 
@@ -579,6 +522,7 @@ def saver(attack_method, attack_params, accuracy_benign, accuracy_adversarial, x
         result_df.to_csv(result_file_path, index=False, mode='a', header=False)
 
     save_adversarial_examples(attack_method, attack_params, x_test_adv, dfTest, scaler)
+    
 
 def plot_attack_accuracy(attack_name, param_values, accuracies, original_accuracy, results_base_dir):
     plt.figure()
@@ -847,7 +791,5 @@ def main_runner(experiment_id):
     end_time = time.time()
     print(f"The code took {(end_time - start_time) } Seconds to run.")
 
-#options: fgsm, itr_jsma, uap_fgsm, trans_fgsm, trans_jsma, trans_uap_fgsm, trans_itr_jsma
-main_runner('random_noise')
-
-# main_runner('fgsm')
+#options: fgsm, itr_jsma, uap_fgsm, trans_fgsm, trans_jsma, trans_uap_fgsm, trans_itr_jsma, random_noise
+main_runner('fgsm')
