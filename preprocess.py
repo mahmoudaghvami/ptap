@@ -8,10 +8,6 @@ import numpy as np
 from sklearn.preprocessing import OneHotEncoder
 
 
-# df = pd.read_csv('O4H_Classifier/o4h_all_events.csv', delimiter=',', usecols=['Time', 'ItemName', 'Value'])
-# df['Time'] = pd.to_datetime(df['Time']).dt.round('min')
-# df.to_csv('o4h_all_events_minute.csv', index=False)
-
 df = pd.read_csv('Orange4Home_dataset/o4h_all_events_minute.csv', delimiter=',', usecols=['Time', 'ItemName', 'Value'])
 item_names = set(df['ItemName']) - {'label'}
 line_count = len(set(df['Time']))
