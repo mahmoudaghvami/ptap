@@ -26,7 +26,7 @@ The PTAP design incorporates a privacy mediator, which serves as a trusted inter
 First you need to have Tensorflow and ART (https://github.com/Trusted-AI/adversarial-robustness-toolbox)
 Then you can run the experiments  including the following Python scripts:
 
-1. **Preprocessing:** [`preprocess.py`](#preprocesspy)
+1. **Preprocessing:** [`preprocess-Vminute.py`](#preprocesspy)
 2. **PTAP Classifier:** [`ptap_classifier_4cross_validation.py`](#ptap_classifier_4cross_validationpy)
 3. **PTAP experements:** [`ptap_exp.py`](#ptap_exp.py)
 4. **PTAP Utility Test:** [`ptap_utility_test.py`](#ptap_utility_testpy)
