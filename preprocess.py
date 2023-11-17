@@ -12,7 +12,7 @@ from sklearn.preprocessing import OneHotEncoder
 # df['Time'] = pd.to_datetime(df['Time']).dt.round('min')
 # df.to_csv('o4h_all_events_minute.csv', index=False)
 
-df = pd.read_csv('O4H_Classifier/o4h_all_events_minute.csv', delimiter=',', usecols=['Time', 'ItemName', 'Value'])
+df = pd.read_csv('Orange4Home_dataset/o4h_all_events_minute.csv', delimiter=',', usecols=['Time', 'ItemName', 'Value'])
 item_names = set(df['ItemName']) - {'label'}
 line_count = len(set(df['Time']))
 new_df =  pd.DataFrame(np.empty((line_count, len(item_names))),columns=list(item_names), index=sorted(list(set(pd.to_datetime(df['Time'], infer_datetime_format=True)))))
