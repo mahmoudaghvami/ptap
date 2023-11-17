@@ -32,8 +32,12 @@ import matplotlib.pyplot as plt
 tf.config.set_visible_devices([], 'GPU')
 
 def load_data():
+    # Define the path to the 'res' folder relative to the current script location
+    base_path = os.path.join(os.path.dirname(__file__), 'res')
+
     #Load the dataset
-    df = pd.read_csv('/home/amini/ptap/O4H_Classifier/check_dataset.csv')
+    df = pd.read_csv(os.path.join(base_path, 'check_dataset.csv'))
+    # df = pd.read_csv('/home/amini/ptap/O4H_Classifier/check_dataset.csv')
     df = df.drop(df.columns[0],axis=1) # dropping the timestamp column
     
     # Normalize the dataset    # preserve the first column -activity labels
@@ -74,6 +78,10 @@ def load_data():
     return df,dfTest ,scaler, min_pixel_value, max_pixel_value, x_train, y_train, x_test, y_test, n_timesteps, n_features, n_outputs
 
 def perturber(attack_method, attack_params, data,y_target):
+
+    # Define the path to the 'res' folder relative to the current script location
+    base_path = os.path.join(os.path.dirname(__file__), 'res')
+
     real_event_count = 0  # Counter for real events
     # num_injected_events=0
     print('Attack method: ', attack_method , ' with params: ', attack_params)
@@ -89,9 +97,11 @@ def perturber(attack_method, attack_params, data,y_target):
         else:
             raise ValueError("Sensor number should be between 0 and 195")
       
+    sensordata_sparsmatrix = pd.read_csv(os.path.join(base_path, 'sensordata_sparsmatrix.csv'))
+    # sensordata_sparsmatrix = pd.read_csv('/home/amini/ptap/O4H_Classifier/sensordata_sparsmatrix.csv')
 
-    sensordata_sparsmatrix = pd.read_csv('/home/amini/ptap/O4H_Classifier/sensordata_sparsmatrix.csv')
-    sensortypes = np.loadtxt('/home/amini/ptap/O4H_Classifier/sensor_typo.csv', delimiter=',', dtype=str)
+    sensortypes = np.loadtxt(os.path.join(base_path, 'sensor_typo.csv'), delimiter=',', dtype=str)
+    # sensortypes = np.loadtxt('/home/amini/ptap/O4H_Classifier/sensor_typo.csv', delimiter=',', dtype=str)
 
     mask_injection = np.ones(x_test.shape)
 
