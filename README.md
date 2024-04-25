@@ -22,8 +22,10 @@ PTAP is introduced as a solution to address the potential threat of untrusted TA
 The PTAP design incorporates a privacy mediator, which serves as a trusted intermediary between smart home devices and the TAP server. The privacy mediator injects targeted perturbations into the data stream, confounding potentially malicious TAP classifiers. Furthermore, it also distinguishes between legitimate and fake actions sent from the TAP server, ensuring that only actions based on real data are executed.
 
 ## Usage
+First, you need to download the Orange4Home dataset. You can download it from 
+https://amiqual4home.inria.fr/orange4home/.
 
-First you need to have Tensorflow and ART (https://github.com/Trusted-AI/adversarial-robustness-toolbox)
+Then, you need to have Tensorflow and ART (https://github.com/Trusted-AI/adversarial-robustness-toolbox)
 Then you can run the experiments  including the following Python scripts:
 
 1. **Preprocessing:** [`preprocess-Vminute.py`](#preprocesspy)
